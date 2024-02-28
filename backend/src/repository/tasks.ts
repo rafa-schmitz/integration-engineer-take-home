@@ -32,3 +32,28 @@ export const save = (task: ITaskRequest): ITask => {
 export const searchAll = (): Record<number, ITask> => {
   return tasks
 }
+
+export const update = (taskId: string, updatedTask: ITaskRequest): ITask => {
+  const updatedTasks: Record<number, ITask> = {}
+
+  for (const key in tasks) {
+    if (Object.prototype.hasOwnProperty.call(tasks, key)) {
+      const task = tasks[key]
+      if (task.id === taskId) {
+        updatedTasks[parseInt(key, 10)] = {
+          id: taskId,
+          title: updatedTask.title,
+          description: updatedTask.description,
+          completed: updatedTask.completed,
+          createdAt: task.createdAt,
+          updatedAt: new Date()
+        }
+      } else {
+        updatedTasks[parseInt(key, 10)] = task
+      }
+    }
+  }
+
+  tasks = updatedTasks // Update tasks with the new object
+  return tasks[parseInt(taskId, 10)]
+}
