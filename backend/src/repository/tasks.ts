@@ -28,3 +28,7 @@ export const save = (task: ITaskRequest): ITask => {
 
   return tasks[objectKey]
 }
+
+export const searchAll = (): Record<number, ITask> => {
+  return tasks
+}
