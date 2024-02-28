@@ -6,6 +6,7 @@ import { composeTask } from '../types/taskRequest'
 import { createTask } from '../use-cases/createTask'
 import { getAll } from '../use-cases/getTasks'
 import { updateTask } from '../use-cases/updateTask'
+import { deleteTask } from '../use-cases/deleteTask'
 
 export const createTaskController = (req: Request, res: Response): Response<ITask> => {
   try {
@@ -33,6 +34,18 @@ export const updateTaskController = (req: Request, res: Response): Response<ITas
     updateTask(id, composeTask({ title, description, completed }))
 
     return res.status(200).json({ message: 'Task updated successfully' })
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message })
+  }
+}
+
+export const deleteTaskController = (req: Request, res: Response): Response => {
+  try {
+    const { id } = req.params
+
+    deleteTask(id)
+
+    return res.status(200).json({ message: 'Task deleted successfully' })
   } catch (e: any) {
     return res.status(400).json({ error: e.message })
   }

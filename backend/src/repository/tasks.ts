@@ -1,5 +1,6 @@
 import { type ITask } from '../types/task'
 import { type ITaskRequest } from '../types/taskRequest'
+
 import crypto from 'crypto'
 
 export let tasks: Record<number, ITask> = {
@@ -56,4 +57,29 @@ export const update = (taskId: string, updatedTask: ITaskRequest): ITask => {
 
   tasks = updatedTasks // Update tasks with the new object
   return tasks[parseInt(taskId, 10)]
+}
+
+export const remove = (taskId: string): void => {
+  // Create a new object without the task with the given ID
+  const updatedTasks: Record<number, ITask> = {}
+  for (const key in tasks) {
+    if (Object.prototype.hasOwnProperty.call(tasks, key) && tasks[key].id !== taskId) {
+      updatedTasks[parseInt(key, 10)] = tasks[key]
+    }
+  }
+  tasks = updatedTasks // Update tasks with the new object
+}
+
+export const searchById = (taskId: string): ITask | undefined => {
+  // Find the task with the given ID
+  for (const key in tasks) {
+    if (Object.prototype.hasOwnProperty.call(tasks, key)) {
+      const task = tasks[key]
+      if (task.id === taskId) {
+        return task
+      }
+    }
+  }
+  // Return undefined if the task with the given ID is not found
+  return undefined
 }
