@@ -1,0 +1,12 @@
+{
+  "name": "integration-engineer-take-home",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    // add script to cd into files and run
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
