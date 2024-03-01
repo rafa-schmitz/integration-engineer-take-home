@@ -3,22 +3,26 @@ import { type ITaskRequest } from '../types/taskRequest'
 
 import crypto from 'crypto'
 
-export let tasks: Record<number, ITask> = {
+export const tasks: Record<string, ITask> = {
   0: {
     id: crypto.randomUUID(),
-    title: 'Test task',
-    description: 'Test description',
+    title: 'take the cat to the vet',
+    description: 'march 1st @ 4pm',
     completed: false,
     createdAt: new Date(),
     updatedAt: null
   }
 }
 
-export const save = (task: ITaskRequest): ITask => {
-  const objectKey: number = Object.keys(tasks).length
+// Maintain a separate mapping of task IDs to tasks
+const taskMap: Record<string, ITask> = {}
 
-  // Add the new task to the tasks record
-  tasks[objectKey] = {
+Object.values(tasks).forEach(task => {
+  taskMap[task.id] = task
+})
+
+export const save = (task: ITaskRequest): ITask => {
+  const newTask: ITask = {
     id: crypto.randomUUID(),
     title: task.title,
     description: task.description,
@@ -27,59 +31,91 @@ export const save = (task: ITaskRequest): ITask => {
     updatedAt: null
   }
 
-  return tasks[objectKey]
+  tasks[newTask.id] = newTask
+  taskMap[newTask.id] = newTask
+
+  return newTask
 }
 
-export const searchAll = (): Record<number, ITask> => {
-  return tasks
+export const searchAll = (): ITask[] => {
+  return Object.values(taskMap).sort((a: ITask, b: ITask) => a.createdAt.getTime() - b.createdAt.getTime())
 }
 
-export const update = (taskId: string, updatedTask: ITaskRequest): ITask => {
-  const updatedTasks: Record<number, ITask> = {}
+export const update = (taskId: string, updatedTask: ITaskRequest): ITask | undefined => {
+  const existingTask = taskMap[taskId]
 
-  for (const key in tasks) {
-    if (Object.prototype.hasOwnProperty.call(tasks, key)) {
-      const task = tasks[key]
-      if (task.id === taskId) {
-        updatedTasks[parseInt(key, 10)] = {
-          id: taskId,
-          title: updatedTask.title,
-          description: updatedTask.description,
-          completed: updatedTask.completed,
-          createdAt: task.createdAt,
-          updatedAt: new Date()
-        }
-      } else {
-        updatedTasks[parseInt(key, 10)] = task
-      }
-    }
-  }
+  if (existingTask === undefined) return undefined // Task with the specified ID not found
 
-  tasks = updatedTasks // Update tasks with the new object
-  return tasks[parseInt(taskId, 10)]
+  // Modify existing task properties directly
+  existingTask.title = updatedTask.title ?? existingTask.title
+  existingTask.description = updatedTask.description ?? existingTask.description
+  existingTask.completed = updatedTask.completed ?? existingTask.completed
+  existingTask.updatedAt = new Date()
+
+  return existingTask
 }
 
 export const remove = (taskId: string): void => {
-  // Create a new object without the task with the given ID
-  const updatedTasks: Record<number, ITask> = {}
-  for (const key in tasks) {
-    if (Object.prototype.hasOwnProperty.call(tasks, key) && tasks[key].id !== taskId) {
-      updatedTasks[parseInt(key, 10)] = tasks[key]
-    }
+  if (taskMap[taskId] !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete tasks[taskMap[taskId].id]
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete taskMap[taskId]
   }
-  tasks = updatedTasks // Update tasks with the new object
 }
 
 export const searchById = (taskId: string): ITask | undefined => {
-  // Find the task with the given ID
-  for (const key in tasks) {
-    if (Object.prototype.hasOwnProperty.call(tasks, key)) {
-      const task = tasks[key]
-      if (task.id === taskId) {
-        return task
-      }
-    }
-  }
-  // Return undefined if the task with the given ID is not found
-  return undefined
+  return taskMap[taskId]
 }
+
+// const taskMap: Record<string, ITask> = {}
+
+// Initialize taskMap during tasks creation
+// const flatResponse = (): void => {
+//   Object.values(tasks).forEach(task => {
+//     taskMap[task.id] = task
+//   })
+// }
+
+// flatResponse()
+
+// export const save = (task: ITaskRequest): ITask => {
+//   const objectKey: number = Object.keys(tasks).length
+//
+//   // Add the new task to the tasks record
+//   tasks[objectKey] = {
+//     id: crypto.randomUUID(),
+//     title: task.title,
+//     description: task.description,
+//     completed: task.completed,
+//     createdAt: new Date(),
+//     updatedAt: null
+//   }
+//
+//   return tasks[objectKey]
+// }
+
+// export const update = (taskId: string, updatedTask: ITaskRequest): ITask => {
+//   const updatedTasks: Record<number, ITask> = {}
+//
+//   for (const key in tasks) {
+//     if (Object.prototype.hasOwnProperty.call(tasks, key)) {
+//       const task = tasks[key]
+//       if (task.id === taskId) {
+//         updatedTasks[parseInt(key, 10)] = {
+//           id: taskId,
+//           title: updatedTask.title,
+//           description: updatedTask.description,
+//           completed: updatedTask.completed,
+//           createdAt: task.createdAt,
+//           updatedAt: new Date()
+//         }
+//       } else {
+//         updatedTasks[parseInt(key, 10)] = task
+//       }
+//     }
+//   }
+//
+//   tasks = updatedTasks // Update tasks with the new object
+//   return tasks[parseInt(taskId, 10)]
+// }
