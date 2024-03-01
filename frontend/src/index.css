@@ -34,7 +34,7 @@ main::-webkit-scrollbar {
 
 .card {
     transform: scale(1);
-    background: linear-gradient( 345deg, #f907070a 0%, #f00f0f9c 33%, rgba(93, 96, 100, 0.79) 60%, rgba(0, 0, 0, 0) 100% );
+    background: linear-gradient( 345deg, #db24240a 0%, #ff21218c 33%, rgba(39, 88, 153, 0.79) 60%, rgba(0, 0, 0, 0) 100% );
     filter: drop-shadow(0 0 0.05em #5c79af40);
     transition: all 0.2s ease-in-out;
 }
