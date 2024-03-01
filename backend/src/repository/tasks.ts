@@ -7,7 +7,7 @@ export const tasks: Record<string, ITask> = {
   0: {
     id: crypto.randomUUID(),
     title: 'take the cat to the vet',
-    description: 'march 1st @ 4pm',
+    description: 'march 4th @ 3pm',
     completed: false,
     createdAt: new Date(),
     updatedAt: null
