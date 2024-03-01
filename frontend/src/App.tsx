@@ -1,62 +1,19 @@
-import { useState, useEffect } from 'react';
-
-type Task = {
-  id: number,
-  title: string,
-  description: string
-}
-
-function App() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [formData, setFormData] = useState({ title: '', description: '' });
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
-    const response = await fetch('http://localhost:8000/tasks')
-    const tasks = await response.json();
-    setTasks(tasks);
-  };
-
-  /* Complete the following functions to hit endpoints on your server */
-  const createTask = async () => {
-  };
-
-  const deleteTask = async (id: string) => {
-  };
-
-
+import { ToDoItemList } from './components/ToDoItemList.tsx'
+import { TasksProvider } from './context/TaskContext.tsx'
+import { ToDoForms } from './components/ToDoForms.tsx'
+import { MantineProvider } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
+const App = () => {
   return (
-    <div>
-      <h1>Task Management App</h1>
-      <ul>
-        {tasks.map(task => (
-          <li key={task.id}>
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-      <div>
-        <h2>Create Task</h2>
-        <input
-          type="text"
-          placeholder="Title"
-          value={formData.title}
-          onChange={e => setFormData({ ...formData, title: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={formData.description}
-          onChange={e => setFormData({ ...formData, description: e.target.value })}
-        />
-        <button onClick={createTask}>Create</button>
-      </div>
-    </div>
+    <main className="flex align-middle justify-center flex-col w-full h-full md:max-w-3xl gap-2 p-8">
+      <TasksProvider>
+        <MantineProvider>
+          <Notifications />
+          <ToDoForms />
+          <ToDoItemList />
+        </MantineProvider>
+      </TasksProvider>
+    </main>
   );
 }
 
